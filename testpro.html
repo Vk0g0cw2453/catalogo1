@@ -1,0 +1,500 @@
+<!DOCTYPE html> <!-- Indica el tipo de documento HTML5 -->
+<html lang="es"> <!-- Define el idioma principal de la página -->
+<head>
+    <meta charset="UTF-8"> <!-- Codificación de caracteres UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Hace la página responsiva en móviles -->
+    <title>Catálogo Interactivo | Arte en Corte Láser</title> <!-- Título que aparece en la pestaña del navegador -->
+    <!-- Paleta de colores elegida: Artisan Kraft -->
+    <!-- Plan de estructura de la aplicación: Explica el diseño SPA, header fijo, sidebar, grid de productos, etc. -->
+    <!-- Elecciones de visualización y contenido: Justifica el uso de grid, filtros, modal, etc. -->
+    <!-- Confirmación: No se usan SVG ni Mermaid JS -->
+    <script src="https://cdn.tailwindcss.com"></script> <!-- Incluye Tailwind CSS para estilos utilitarios -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/> <!-- Estilos de Swiper.js para el carrusel -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script> <!-- Script de Swiper.js para el carrusel de imágenes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"> <!-- Optimiza la carga de fuentes de Google -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <!-- Optimiza la carga de fuentes de Google con CORS -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet"> <!-- Fuente Montserrat para el sitio -->
+    <style>
+        :root {
+    --bg: #0e1016;
+    --bg2: #0a0c12;
+    --text: #e9f1ff;
+    --muted: #a7b3c9;
+    --primary: #00e5ff;
+    --accent: #ff6ad5;
+    --stroke: rgba(255, 255, 255, 0.16);
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    --radius: 16px;
+    --gap: 20px;
+  }
+        /* Estilos generales para el body */
+        
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: Poppins, system-ui, sans-serif;
+      background:
+        radial-gradient(1200px 700px at 10% -10%, rgba(0, 229, 255, 0.18), transparent 60%),
+        radial-gradient(900px 600px at 90% 110%, rgba(255, 106, 213, 0.14), transparent 60%),
+        linear-gradient(160deg, var(--bg2), var(--bg));
+      background-attachment: fixed;
+      display: flex;
+      flex-direction: column;
+    }        /* Efecto cristal para elementos */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.6); /* Fondo translúcido */
+            backdrop-filter: blur(10px); /* Difumina el fondo */
+            -webkit-backdrop-filter: blur(10px); /* Difumina el fondo en Safari */
+            border: 1px solid rgba(255, 255, 255, 0.8); /* Borde blanco translúcido */
+        }
+        /* Tarjeta de producto con efecto cristal y sombra neón */
+        .product-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem; /* Bordes redondeados */
+            backdrop-filter: blur(8px); /* Difumina el fondo */
+            border: 1px solid rgba(255,255,255,0.18); /* Borde translúcido */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease-out; /* Animación elástica al hacer hover */
+        }
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.03); /* Eleva y agranda la tarjeta al hacer hover */ 
+        }
+        /* Botones de filtro con efecto cápsula y neón */
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05); /* Fondo translúcido muy sutil */
+            border: 1px solid; /* Borde que tomará el color dinámico */
+            color: var(--muted); /* Color de texto por defecto */
+            font-weight: 600; /* Texto en negrita */
+            transition: box-shadow 0.2s, background 0.2s, color 0.2s, transform 0.2s; /* Animación suave */
+        }
+        .filter-btn.active,
+        .filter-btn:hover {
+            color: #fff; /* Texto blanco */
+            transform: translateY(-2px); /* Eleva ligeramente el botón */
+            /* El fondo y la sombra se aplicarán dinámicamente con JS */
+        }
+        /* Modal con efecto cristal y sombra neón */
+        #product-modal > div {
+            background: rgba(255,255,255,0.25); /* Fondo translúcido */            
+            border-radius: 2rem; /* Bordes muy redondeados */
+            border: 1px solid rgba(255,255,255,0.18); /* Borde translúcido */
+            backdrop-filter: blur(12px); /* Difumina el fondo */
+        }
+        /* Botón de WhatsApp con sombra y gradiente neón */
+        #whatsapp-contact-btn {
+            box-shadow: 0 0 12px 2px #25D36680, 0 2px 8px 0 #C09E6D80; /* Sombra verde y dorada */
+            border: 2px solid #25D366; /* Borde verde WhatsApp */
+            background: linear-gradient(90deg, #8bac15b2 50%, #25D366 100%); /* Gradiente dorado a verde */
+            color: #fff; /* Texto blanco */
+            transition: box-shadow 0.2s, border-color 0.2s; /* Animación suave */
+        }
+        #whatsapp-contact-btn:hover {
+            box-shadow: 0 0 24px 6px #25D366, 0 2px 12px 0 #FFD70080; /* Sombra más intensa al hacer hover */
+            border-color: #FFD700; /* Borde dorado al hacer hover */
+        }
+        /* Corazón de favoritos con sombra neón */
+        .favorite-btn.favorited {
+            text-shadow: 0 0 8px #FFD700, 0 0 4px #E53E3E; /* Sombra dorada y roja */
+        }
+        /* Flechas del carrusel con color dorado */
+        .modal-swiper .swiper-button-next, .modal-swiper .swiper-button-prev {
+            color: #C09E6D; /* Color dorado */
+            --swiper-navigation-size: 30px; /* Tamaño de las flechas */
+        }
+        /* Paginación activa del carrusel en dorado */
+         .modal-swiper .swiper-pagination-bullet-active {
+            background-color: #C09E6D; /* Color dorado */
+        }
+        .catalog-grid {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(3, minmax(135px, 1fr)); /* Cambiado a 3 columnas */
+}
+/* Ya no necesitas los @media para el grid, auto-fit lo hace por ti */
+/*
+@media (min-width: 600px) {
+  .catalog-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 900px) {
+  .catalog-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+*/
+    </style>
+</head>
+<body class="antialiased"> <!-- Suaviza los bordes del texto -->
+
+    <!-- Header fijo con branding y barra de navegación -->
+    <header class="sticky top-0 z-40 shadow-lg" style="background: rgba(14, 16, 22, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center"> <!-- Contenedor del nav, centrado y con padding -->
+            <a href="#" class="text-2xl font-bold text-white">Arte<span class="text-[#00e5ff]">Láser</span></a> <!-- Logo y nombre de la marca -->
+            <div class="hidden md:flex items-center space-x-6"> <!-- Menú de navegación, visible solo en desktop -->
+                <a href="#gallery" class="text-gray-300 hover:text-white transition-colors">Galería</a> <!-- Enlace a la galería -->
+                <a href="#about" class="text-gray-300 hover:text-white transition-colors">Nosotros</a> <!-- Enlace a sección Nosotros -->
+                <a href="#contact" class="text-gray-300 hover:text-white transition-colors">Contacto</a> <!-- Enlace a sección Contacto -->
+            </div>
+            <div class="w-full max-w-xs hidden sm:block"> <!-- Input de búsqueda, visible solo en desktop/tablet -->
+                 <input type="text" id="search-input" placeholder="Buscar por nombre..." class="w-full px-4 py-2 bg-black/20 border border-white/20 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00e5ff]/50 transition-shadow">
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="container mx-auto px-6 py-6 flex flex-col items-center"> <!-- Centra todo el contenido principal -->
+    <div class="text-center mb-6 w-full">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-100 tracking-tight mt-2 mb-2">
+            Nuestro Catálogo Exclusivo
+        </h1>
+        <p class="mt-2 text-lg text-gray-300 max-w-2xl mx-auto mb-2">        </p>
+    </div>
+
+    <section id="gallery" class="w-full flex flex-col items-center">
+        <div class="w-full max-w-xs sm:hidden mb-4 mx-auto">
+            <input type="text" id="search-input-mobile" placeholder="Buscar por nombre..." class="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#C09E6D]/50 transition-shadow">
+        </div>
+        <div id="category-filters" class="flex flex-wrap gap-2 mb-4 justify-center"></div> <!-- Botones de categorías centrados -->
+        <div id="product-catalog" class="catalog-grid w-full"></div> <!-- Catálogo centrado -->
+    </section>
+</main>
+    
+    <!-- Footer con información de contacto y derechos -->
+    <footer id="contact" class="bg-white mt-20">
+        <div class="container mx-auto px-6 py-8 text-center text-gray-500">
+            <p>&copy; 2025 ArteLáser. Todos los derechos reservados.</p> <!-- Derechos de autor -->
+            <p class="mt-2">Diseños que inspiran, la precisión hecha arte.</p> <!-- Frase de cierre -->
+        </div>
+    </footer>
+
+    <!-- Botón Flotante de WhatsApp -->
+    <a id="floating-whatsapp-btn" class="fixed bottom-6 right-6 bg-[#25D366] w-16 h-16 rounded-full flex items-center justify-center text-white shadow-lg z-50 transition-transform hover:scale-110" title="Contáctanos por WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-1.001z"/>
+        </svg>
+    </a>
+
+    <!-- Modal de producto con carrusel de imágenes -->
+    <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] flex flex-col md:flex-row overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="w-full md:w-1/2 relative"> <!-- Carrusel de imágenes del producto -->
+                <div class="swiper modal-swiper h-full">
+                    <div class="swiper-wrapper" id="modal-swiper-wrapper"></div> <!-- Slides del carrusel, se llenan dinámicamente -->
+                    <div class="swiper-button-next"></div> <!-- Flecha siguiente -->
+                    <div class="swiper-button-prev"></div> <!-- Flecha anterior -->
+                    <div class="swiper-pagination"></div> <!-- Paginación del carrusel -->
+                </div>
+            </div>
+            <div class="w-full md:w-1/2 p-6 flex flex-col"> <!-- Información del producto en el modal -->
+                <div class="flex-grow">
+                    <h2 id="modal-product-name" class="text-3xl font-bold text-gray-800 mb-2"></h2> <!-- Nombre del producto -->
+                    <p id="modal-product-category" class="text-sm text-[#C09E6D] font-semibold mb-4 uppercase"></p> <!-- Categoría -->
+                    <p id="modal-product-price" class="text-2xl text-gray-700 mb-6"></p> <!-- Precio -->
+                    <p id="modal-product-description" class="text-gray-600 leading-relaxed text-sm mb-2"></p> <!-- Descripción -->
+                </div>
+                <div class="mt-6 flex-shrink-0">
+                    <button id="whatsapp-contact-btn" class="w-full bg-[#C09E6D] text-white font-bold py-3 px-6 rounded-lg hover:bg-[#b5915f] transition-colors shadow-lg">
+                        Solicitar Cotización por WhatsApp
+                    </button> <!-- Botón para cotizar por WhatsApp -->
+                </div>
+            </div>
+        </div>
+        <button id="close-modal" class="absolute top-4 right-4 text-white text-4xl leading-none">&times;</button> <!-- Botón para cerrar el modal -->
+    </div>
+
+    <!-- Script principal de la aplicación -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => { // Espera a que el DOM esté listo
+
+            // Array de productos con sus datos
+            const products = [
+                { id: 1, name: "Caja 1", price: "$150", category: "Hogar", 
+                description: "Caja de regalo de madera con diseño de corazón cortado con láser", 
+                images: ["img/pro2-1.jpeg", "img/papel2.jpg", "img/caja1.jpg"] },
+
+                { id: 2, name: "Aretes de Colibrí en Madera", price: "$450.00", category: "Joyería", 
+                description: "Un accesorio perfecto para amantes de la naturaleza y el diseño único.", 
+                images: ["img/18.png", "img/cajac2.jpg", "img/cajac3.jpg"] },
+                
+                { id: 3, name: "Letrero para Boda Personalizado", price: "$2,200.00", category: "Eventos", 
+                description: "Un recuerdo para toda la vida.", 
+                images: ["img/ff1.jpg", "img/corazon12.jpg", "img/corazon13.jpg"] },
+                
+                { id: 4, name: "Figura de Colección 'Dragón Ancestral'", price: "$2,800.00", category: "Arte", 
+                description: "Un desafío y una pieza de exhibición impresionante.", 
+                images: ["img/reloj1.jpg", "img/1.png", "img/3.png"] },
+                
+                { id: 5, name: "Portavasos de Diseño Geométrico", price: "$550.00", category: "Hogar", 
+                description: "Protegen tus superficies con estilo y son un excelente tema de conversación.", 
+                images: ["img/taza1.jpg", "img/2.png", "img/caja1.jpg"] },
+                
+                { id: 6, name: "Collar 'Fases de la Luna'", price: "$750.00", category: "Joyería", 
+                description: "Una pieza mística y moderna.", 
+                images: ["img/estrella1.jpg", "img/corazon3.jpg", "img/4 (2).png"] },
+
+                { id: 7, name: "Collar 'Fases de la Luna'", price: "$750.00", category: "Eventos", 
+                description: "Una pieza mística y moderna.", 
+                images: ["img/dragon1.jpg", "img/corazon3.jpg", "img/4 (3).png"] },
+            ];
+
+            // Referencias a elementos del DOM
+            const catalogContainer = document.getElementById('product-catalog'); // Contenedor de productos
+            const filtersContainer = document.getElementById('category-filters'); // Contenedor de filtros
+            const searchInput = document.getElementById('search-input'); // Input de búsqueda desktop
+            const searchInputMobile = document.getElementById('search-input-mobile'); // Input de búsqueda móvil
+            const modal = document.getElementById('product-modal'); // Modal de producto
+            const modalContent = modal.querySelector('.transform'); // Contenido animado del modal
+            const closeModalBtn = document.getElementById('close-modal'); // Botón para cerrar el modal (aunque no se usa, está en el HTML)
+
+            // Objeto para mapear categorías a colores de borde
+            const categoryColors = {
+                "Todos": "#1FEDFF",      // Azul para "Todos"
+                "Hogar": "#FF8B1F",      // Naranja
+                "Joyería": "#ff6ad5",    // Rosa/Magenta
+                "Eventos": "#facc15",    // Amarillo/Dorado
+                "Favoritos": "#E23C4A",  // Amarillo/Dorado para Favoritos
+                "Arte": "#2CB21F",       // Verde para Arte
+                "default": "rgba(255, 255, 255, 0.18)" // Color por defecto
+            };
+
+            let favorites = JSON.parse(localStorage.getItem('laserArtFavorites')) || []; // Array de favoritos guardados en localStorage
+            let currentFilter = 'Todos'; // Filtro actual de categoría
+            let currentSearch = ''; // Texto de búsqueda actual
+            let modalSwiper; // Instancia del carrusel Swiper
+
+            // Actualiza los favoritos en localStorage
+            const updateFavoritesStorage = () => {
+                localStorage.setItem('laserArtFavorites', JSON.stringify(favorites));
+            };
+
+            // Renderiza los productos en el grid según filtros y búsqueda
+            const renderProducts = () => {
+                catalogContainer.innerHTML = ''; // Limpia el grid
+                let filteredProducts = products; // Empieza con todos los productos
+
+                if (currentFilter === 'Favoritos') { // Si el filtro es favoritos
+                    filteredProducts = products.filter(p => favorites.includes(p.id));
+                } else if (currentFilter !== 'Todos') { // Si el filtro es una categoría específica
+                    filteredProducts = products.filter(p => p.category === currentFilter);
+                }
+
+                if (currentSearch) { // Si hay texto de búsqueda
+                    filteredProducts = filteredProducts.filter(p => p.name.toLowerCase().includes(currentSearch));
+                }
+                
+                if (filteredProducts.length === 0) { // Si no hay productos que coincidan
+                    catalogContainer.innerHTML = `<p class="col-span-full text-center text-gray-500">No se encontraron productos que coincidan con tu búsqueda.</p>`;
+                    return;
+                }
+
+                filteredProducts.forEach(product => { // Por cada producto filtrado
+                    const isFavorited = favorites.includes(product.id); // Verifica si es favorito
+                    const card = document.createElement('div'); // Crea la tarjeta
+                    card.className = 'product-card rounded-lg shadow-md overflow-hidden group cursor-pointer'; // Clases de la tarjeta
+
+                    // Asigna el color del borde según la categoría del producto
+                    const borderColor = categoryColors[product.category] || categoryColors.default;
+                    card.style.borderColor = borderColor;
+
+                    // Efecto neón en hover (sin la lógica de imágenes)
+                    card.addEventListener('mouseenter', () => {
+                        card.style.boxShadow = `0 8px 32px 0 ${borderColor}40, 0 0 24px 4px ${borderColor}95`;
+                    });
+                    card.addEventListener('mouseleave', () => {
+                        card.style.boxShadow = ''; // Quita el efecto neón
+                    });
+
+                    const swiperId = `card-swiper-${product.id}`;
+                    const imagesHtml = product.images.map(img => `<div class="swiper-slide"><img src="${img}" alt="${product.name}" class="w-full h-full object-cover"></div>`).join('');
+
+                    card.innerHTML = `
+    <div class="relative h-40 overflow-hidden"> <!-- Altura fija y overflow hidden para el zoom -->
+        ${product.images.length > 1 ? `
+        <div id="${swiperId}" class="swiper h-full">
+            <div class="swiper-wrapper">
+                ${imagesHtml}
+            </div>
+        </div>
+        ` : `
+        <img src="${product.images[0]}" alt="${product.name}" class="w-full h-full object-cover">
+        `}
+        <button data-id="${product.id}" class="favorite-btn absolute top-2 right-2 text-2xl z-10 transition-transform hover:scale-110 ${isFavorited ? 'favorited' : ''}" style="text-shadow: 0 1px 3px rgba(0,0,0,0.4);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="${isFavorited ? '#E53E3E' : '#bbb'}" stroke="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21s-7.5-5.2-7.5-10.2A4.5 4.5 0 0 1 12 6.3a4.5 4.5 0 0 1 7.5 4.5C19.5 15.8 12 21 12 21z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="p-4">
+        <h3 class="text-lg font-semibold text-white truncate">${product.name}</h3>
+        <p class="text-sm text-gray-400">${product.category}</p>
+        <p class="text-lg font-bold text-gray-200 mt-2">${product.price}</p>
+    </div>
+`;
+                    card.addEventListener('click', (e) => {
+                        // Si el click fue en el botón de favorito o su SVG, no abrir el modal
+                        if (e.target.closest('.favorite-btn')) return;
+                        openModal(product); // Solo abre el modal si no fue clic en el corazón
+                    });
+                    catalogContainer.appendChild(card); // Agrega la tarjeta al grid
+
+                    // --- INICIO: Inicialización del carrusel de la tarjeta ---
+                    if (product.images.length > 1) {
+                        // Retraso aleatorio para que no empiecen todos a la vez
+                        setTimeout(() => {
+                            new Swiper(`#${swiperId}`, {
+                                loop: true,
+                                effect: 'slide', // Puedes cambiar a 'fade', 'cube', 'coverflow', 'flip'
+                                autoplay: {
+                                    delay: 2500 + (Math.random() * 1500), // Delay base + aleatorio
+                                    disableOnInteraction: true,
+                                },
+                            });
+                        }, Math.random() * 500); // Inicia cada carrusel en un momento ligeramente diferente
+                    }
+                });
+            };
+
+            // Renderiza los botones de filtro de categorías
+            const renderFilters = () => {
+                const categories = ['Todos', ...new Set(products.map(p => p.category)), 'Favoritos']; // Obtiene todas las categorías únicas
+                filtersContainer.innerHTML = ''; // Limpia el contenedor de filtros
+                categories.forEach(category => { // Por cada categoría
+                    const button = document.createElement('button'); // Crea el botón
+                    button.dataset.category = category; // Asigna la categoría al botón
+                    button.textContent = category === 'Favoritos' ? `★ ${category}` : category.replace(/ y /g, ' & '); // Texto del botón
+                    button.className = `filter-btn px-4 py-2 rounded-full text-sm`; // Clases de estilo
+
+                    const color = categoryColors[category] || categoryColors.default;
+                    button.style.borderColor = color;
+                    button.style.color = color;
+
+                    if (currentFilter === category) {
+                        button.classList.add('active');
+                        button.style.background = color;
+                        button.style.color = '#0e1016'; // Texto oscuro para contraste
+                        button.style.boxShadow = `0 0 16px 2px ${color}90`;
+                    }
+
+                    button.addEventListener('click', () => { // Al hacer click en el botón
+                        currentFilter = category; // Cambia el filtro actual
+                        renderFilters(); // Vuelve a renderizar los filtros
+                        renderProducts(); // Vuelve a renderizar los productos
+                        // Desplazamiento suave hacia la galería
+                        document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
+                    });
+                    filtersContainer.appendChild(button); // Agrega el botón al contenedor
+                });
+            };
+            
+            // Abre el modal con la información del producto
+            const openModal = (product) => {
+                document.getElementById('modal-product-name').textContent = product.name; // Nombre
+                document.getElementById('modal-product-category').textContent = product.category; // Categoría
+                document.getElementById('modal-product-price').textContent = product.price; // Precio
+                document.getElementById('modal-product-description').textContent = product.description; // Descripción
+                document.getElementById('whatsapp-contact-btn').dataset.product = product.name; // Asigna el nombre al botón de WhatsApp
+
+                // Aplica el brillo neón dinámico al modal
+                const borderColor = categoryColors[product.category] || categoryColors.default;
+                modalContent.style.borderColor = borderColor;
+                modalContent.style.boxShadow = `0 8px 32px 0 ${borderColor}40, 0 0 24px 4px ${borderColor}95`;
+
+                const swiperWrapper = document.getElementById('modal-swiper-wrapper'); // Contenedor de slides
+                swiperWrapper.innerHTML = ''; // Limpia los slides
+                product.images.forEach(imgUrl => { // Por cada imagen del producto
+                    swiperWrapper.innerHTML += `<div class="swiper-slide"><img src="${imgUrl}" alt="${product.name}" class="w-full h-full object-cover"></div>`;
+                });
+
+                if (modalSwiper) { // Si ya existe una instancia de Swiper
+                    modalSwiper.destroy(true, true); // La destruye para evitar duplicados
+                }
+                modalSwiper = new Swiper('.modal-swiper', { // Crea una nueva instancia de Swiper
+                    loop: true, // Carrusel infinito
+                    pagination: { el: '.swiper-pagination', clickable: true }, // Paginación
+                    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' }, // Flechas de navegación
+                });
+                
+                modal.classList.remove('hidden'); // Muestra el modal
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0'); // Quita la opacidad para animación
+                    modalContent.classList.remove('scale-95'); // Quita el escalado para animación
+                }, 10);
+                document.body.style.overflow = 'hidden'; // Evita scroll en el fondo
+            };
+
+            // Cierra el modal y limpia el carrusel
+            const closeModal = () => {
+                modal.classList.add('opacity-0'); // Aplica opacidad para animación
+                modalContent.classList.add('scale-95'); // Aplica escalado para animación
+                setTimeout(() => {
+                    modal.classList.add('hidden'); // Oculta el modal
+                    // Limpia la sombra al cerrar para que no se vea en la siguiente apertura
+                    modalContent.style.boxShadow = '';
+                    if(modalSwiper) { // Si existe el carrusel
+                       modalSwiper.destroy(true, true); // Lo destruye
+                       modalSwiper = null; // Limpia la variable
+                    }
+                }, 300);
+                 document.body.style.overflow = 'auto'; // Permite scroll en el fondo nuevamente
+            };
+
+            // Maneja el click en el botón de favorito
+            catalogContainer.addEventListener('click', (e) => {
+                const favBtn = e.target.closest('.favorite-btn'); // Detecta el botón aunque el click sea en el SVG
+                if (favBtn) {
+                    e.stopPropagation(); // Evita que se abra el modal
+                    const productId = parseInt(favBtn.dataset.id, 10); // Obtiene el id del producto
+                    const svg = favBtn.querySelector('svg'); // Obtiene el SVG del corazón
+                    if (favorites.includes(productId)) {
+                        favorites = favorites.filter(id => id !== productId); // Elimina de favoritos
+                        favBtn.classList.remove('favorited');
+                        svg.setAttribute('fill', '#bbb'); // Corazón gris
+                    } else {
+                        favorites.push(productId); // Agrega a favoritos
+                        favBtn.classList.add('favorited');
+                        svg.setAttribute('fill', '#E53E3E'); // Corazón rojo
+                    }
+                    updateFavoritesStorage();
+                    if (currentFilter === 'Favoritos') {
+                        renderProducts();
+                    }
+                    return; // Sale para que no abra el modal
+                }
+                // ...el resto del código para abrir el modal...
+            });
+
+            // Maneja la búsqueda en los inputs
+            const handleSearch = (e) => {
+                currentSearch = e.target.value.toLowerCase(); // Actualiza el texto de búsqueda
+                renderProducts(); // Vuelve a renderizar los productos
+            };
+            
+            searchInput.addEventListener('input', handleSearch); // Evento de búsqueda desktop
+            searchInputMobile.addEventListener('input', handleSearch); // Evento de búsqueda móvil
+
+            document.getElementById('close-modal').addEventListener('click', closeModal); // Evento para cerrar el modal
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) { // Si se hace click fuera del contenido del modal
+                    closeModal(); // Cierra el modal
+                }
+            });
+            
+            document.getElementById('whatsapp-contact-btn').addEventListener('click', function() { // Evento para el botón de WhatsApp
+                const productName = this.dataset.product; // Obtiene el nombre del producto
+                const message = `¡Hola! Estoy interesado en el producto "${productName}" y me gustaría solicitar una cotización.`; // Mensaje predefinido
+                const numero = '525580182378'; // Número de WhatsApp con lada internacional
+                window.open(`https://wa.me/${numero}?text=${encodeURIComponent(message)}`, '_blank'); // Abre WhatsApp con el mensaje
+            });
+
+            document.getElementById('floating-whatsapp-btn').addEventListener('click', function() { // Evento para el botón flotante de WhatsApp
+                const message = `¡Hola! Quisiera más información sobre sus productos.`; // Mensaje genérico
+                const numero = '525580182378'; // Número de WhatsApp con lada internacional
+                window.open(`https://wa.me/${numero}?text=${encodeURIComponent(message)}`, '_blank'); // Abre WhatsApp con el mensaje
+            });
+            
+            renderFilters(); // Renderiza los filtros al cargar la página
+            renderProducts(); // Renderiza los productos al cargar la página
+        });
+    </script>
+</body>
+</html>
